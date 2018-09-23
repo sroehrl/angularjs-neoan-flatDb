@@ -35,13 +35,14 @@
         </p>
         <p ng-if="test.userBucket">
             <button ng-click="dump()">outputting the modified DB via $db.writeDump()</button>
-            <br>
-            <code ng-if="dumped">{{dumped}}</code>
+
         </p>
     </div>
     <div style="display: inline-block;width:30%; color:white;background:black;">
         <h3>Loaded entities</h3>
-        <pre ng-bind="beauty"></pre>
+        <pre ng-bind="beauty" ></pre>
+        <h3 ng-if="dumped">Dump-JSON</h3>
+        <pre ng-if="dumped" ng-bind="dumped" ></pre>
     </div>
 
 
