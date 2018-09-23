@@ -1,0 +1,17 @@
+[
+  {
+    "existingId":{
+      "_nId":"existingId",
+      "someKey":"someValue",
+      "someArray":[
+        {"_nId":"someObj"}
+      ]
+    }
+  },
+  {
+    "someObj":{
+      "_nId":"someObj",
+      "key":"value"
+    }
+  }
+]

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>neoan-flatDb demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular.js" integrity="sha256-57LfeK2BvOobYQX2XI1cm6H+bqBPKEgr1KgV/zdycSs=" crossorigin="anonymous"></script>
+    <script src="../neoanFlatdb.js"></script>
+</head>
+<body ng-app="app" ng-controller="simpleCtrl">
+
+<div >
+    <div style="display: inline-block;width:60%;padding:10px">
+        <h1 ng-if="db">Fully loaded</h1>
+        <h2>Querying</h2>
+        <p>
+            <button ng-click="test1=db.query('someObj')">loading "someObj" by indexed id (db.query('someObj')) </button>
+            <br>
+            <code>{{test1}}</code>
+        </p>
+        <p>
+            <button ng-click="test2=db.query({someKey:'someValue'})">loading "existingId" by comparator-object id (db.query({someKey:'someValue'}))</button>
+            <br>
+            <code>{{test2}}</code>
+        </p>
+        <h2>Generating (asynchronous)</h2>
+        <p>
+            <button ng-click="test.createBucket()">creating a new bucket with the array "user" (db.put({users:[]}))</button>
+            <br>
+            <code ng-show="test.userBucket">{{test.userBucket}}</code>
+        </p>
+        <p ng-if="test.userBucket">
+            <button ng-click="test.userBucket.users.attach(firstUser)">adding a user to the bucket ([bucket].attach(userObject)])</button>
+            <br>
+            <code>{{db.query({gender:'male'})}}</code>
+        </p>
+        <p ng-if="test.userBucket">
+            <button ng-click="dump()">outputting the modified DB via $db.writeDump()</button>
+            <br>
+            <code ng-if="dumped">{{dumped}}</code>
+        </p>
+    </div>
+    <div style="display: inline-block;width:30%; color:white;background:black;">
+        <h3>Loaded entities</h3>
+        <pre ng-bind="beauty"></pre>
+    </div>
+
+
+</div>
+<script>
+    angular.module('app',['neoan.flatDb']).controller('simpleCtrl',['$scope','$db',function($scope, $db){
+        $scope.firstUser = {
+            name:'G-Diddy',
+            gender:'male',
+            numbers:[]
+
+        };
+        $db.connect('data.nfdb').then(function(dbService){
+            $scope.db = dbService;
+            $scope.test = {
+                userBucket:false,
+                createBucket:function () {
+                    $scope.db.put({users:[]}).then(function(userStorage){
+                        $scope.test.userBucket = userStorage;
+                    })
+                }
+            };
+
+        });
+
+        $scope.$watch('db',function(){
+            if(typeof $scope.db !== 'undefined' && typeof $scope.db._memory !== 'undefined'){
+                $scope.beauty = $scope.pretty($scope.db._memory.indexedObj);
+            }
+
+        },true);
+        $scope.pretty = function(json){
+            return JSON.stringify(json,null,'  ');
+        };
+        $scope.dump = function(){
+            $scope.dumped = $scope.pretty($scope.db.writeDump());
+        }
+    }])
+</script>
+</body>
+</html>

@@ -101,7 +101,7 @@ angular.module('neoan.flatDb', [])
         service.connect = function (location) {
             return $q(function (resolve, reject) {
                 if (typeof service._memory.database !== 'undefined' && location === service._memory.database) {
-                    resolve('loaded');
+                    resolve(service);
                 } else {
                     $http.get(location).then(function (db) {
                         service._memory.database = location;
