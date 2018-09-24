@@ -1,0 +1,14 @@
+{
+  "name": "angularjs-neoan-flatDb",
+  "_cacheHeaders": {
+    "Content-Type": "text/html; charset=utf-8"
+  },
+  "dependencies:{
+    "angular": "1.7.4"
+  },
+  "main": "./neoanFlatdb.js",
+  "_source": "https://github.com/sroehrl/angularjs-neoan-flatDb",
+  "_target": "*",
+  "_originalSource": "https://github.com/sroehrl/angularjs-neoan-flatDb",
+  "_direct": true
+}
