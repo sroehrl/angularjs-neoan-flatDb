@@ -3,7 +3,7 @@
   "_cacheHeaders": {
     "Content-Type": "text/html; charset=utf-8"
   },
-  "dependencies:{
+  "dependencies":{
     "angular": "1.7.4"
   },
   "main": "./neoanFlatdb.js",
