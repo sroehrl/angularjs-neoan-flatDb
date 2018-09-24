@@ -64,16 +64,49 @@ angular.module('neoan.flatDb', [])
                     return v.toString(16);
                 });
             },
+            insertOrUpdate:function(obj){
+                tester = false;
+                angular.forEach(readFrom,function(all,i){
+                    currentLvl1 = Object.keys(all)[0];
+                    if(obj._nId === currentLvl1){
+                        tester = true;
+                        angular.forEach(readFrom[i][currentLvl1],function(val,key){
+                            if(typeof obj[key] !== 'undefined'){
+                                readFrom[i][currentLvl1][key] = obj[key];
+                            }
+                        })
+                    }
+                });
+                if(!tester){
+                    let newObj = {};
+                    newObj[obj._nId] = obj;
+                    readFrom.push(newObj);
+                }
+            },
             attachIterator: function(newObj,lvl1,lvl2){
                 return $q(function(resolve){
                     service.put(newObj).then(function(res){
                         const pusher = {_nId:res._nId};
                         angular.forEach(readFrom, function (top, i) {
                             if (Object.keys(top)[0] === lvl1) {
-                                readFrom[i][lvl1][lvl2].push(pusher);
+                                // do not add twice!
+                                let exists = false;
+                                angular.forEach(readFrom[i][lvl1][lvl2],function(item){
+                                    if(item._nId === res._nId){
+                                        exists = true;
+                                        console.warn('You cannot add this object twice!');
+                                    }
+                                });
+                                if(!exists){
+                                    readFrom[i][lvl1][lvl2].push(pusher);
+                                }
+
                             }
                         });
-                        resolve(operations.initialize());
+                        operations.initialize().then(function(){
+                            resolve(res);
+                        });
+
                     });
                 });
             },
@@ -121,9 +154,7 @@ angular.module('neoan.flatDb', [])
                 if (typeof obj._nId === 'undefined') {
                     obj._nId = operations.uuid();
                 }
-                let newObj = {};
-                newObj[obj._nId] = obj;
-                readFrom.push(newObj);
+                operations.insertOrUpdate(obj);
                 operations.initialize().then(function () {
                     resolve(service.query(obj._nId));
                 })

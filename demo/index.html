@@ -13,28 +13,33 @@
         <h1 ng-if="db">Fully loaded</h1>
         <h2>Querying</h2>
         <p>
-            <button ng-click="test1=db.query('someObj')">loading "someObj" by indexed id (db.query('someObj')) </button>
+            <button ng-click="test1=db.query('someObj')">1. loading "someObj" by indexed id (db.query('someObj')) </button>
             <br>
             <code>{{test1}}</code>
         </p>
         <p>
-            <button ng-click="test2=db.query({someKey:'someValue'})">loading "existingId" by comparator-object id (db.query({someKey:'someValue'}))</button>
+            <button ng-click="test2=db.query({someKey:'someValue'})">2. loading "existingId" by comparator-object id (db.query({someKey:'someValue'}))</button>
             <br>
             <code>{{test2}}</code>
         </p>
         <h2>Generating (asynchronous)</h2>
         <p>
-            <button ng-click="test.createBucket()">creating a new bucket with the array "user" (db.put({users:[]}))</button>
+            <button ng-click="test.createBucket()">1. creating a new bucket with the array "user" (db.put({users:[]}))</button>
             <br>
             <code ng-show="test.userBucket">{{test.userBucket}}</code>
         </p>
         <p ng-if="test.userBucket">
-            <button ng-click="test.userBucket.users.attach(firstUser)">adding a user to the bucket ([bucket].attach(userObject)])</button>
+            <button ng-click="test.attachUser()">2. adding a user to the bucket ([bucket].attach(userObject)])</button>
             <br>
             <code>{{db.query({gender:'male'})}}</code>
         </p>
         <p ng-if="test.userBucket">
-            <button ng-click="dump()">outputting the modified DB via $db.writeDump()</button>
+            <button ng-click="test.changeUserName()">3. changing a value of our indexed user ("G-Diddy" -> "F-Diddy")</button>
+            <br>
+            <code>{{db.query({gender:'male'})}}</code>
+        </p>
+        <p ng-if="test.userBucket">
+            <button ng-click="dump()"> outputting the modified DB via $db.writeDump()</button>
 
         </p>
     </div>
@@ -55,6 +60,7 @@
             numbers:[]
 
         };
+
         $db.connect('data.nfdb').then(function(dbService){
             $scope.db = dbService;
             $scope.test = {
@@ -63,6 +69,16 @@
                     $scope.db.put({users:[]}).then(function(userStorage){
                         $scope.test.userBucket = userStorage;
                     })
+                },
+                attachUser:function(){
+                    this.userBucket.users.attach($scope.firstUser).then(function(user){
+                        $scope.firstUser = user;
+                        console.log(user);
+                    });
+                },
+                changeUserName:function(){
+                    $scope.firstUser.name = 'F-Diddy';
+                    $scope.db.put($scope.firstUser);
                 }
             };
 
