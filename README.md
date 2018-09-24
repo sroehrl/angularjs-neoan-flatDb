@@ -5,7 +5,7 @@ Deployable, indexed, offline-first Database for AngularJS
 Keeps the necessary abstraction-level for your apps when dealing with packaged, 
 offline applications while providing queryable data.
 
->bower install https://github.com/sroehrl/angularjs-neoan-flatDb --save
+>bower install https://github.com/sroehrl/angularjs-neoan-flatDb.git --save
 
 ###  [AngularJS](https://angularjs.org) module
 
