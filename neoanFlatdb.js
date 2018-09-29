@@ -72,6 +72,7 @@ angular.module('neoan.flatDb', [])
                         tester = true;
                         angular.forEach(readFrom[i][currentLvl1],function(val,key){
                             if(typeof obj[key] !== 'undefined'){
+
                                 readFrom[i][currentLvl1][key] = obj[key];
                             }
                         })
@@ -126,7 +127,7 @@ angular.module('neoan.flatDb', [])
             initialize: function () {
                 return $q(function (resolve) {
                     service._memory.indexedObj = operations.deepen(readFrom);
-                    service._memory.array = Object.keys(service._memory.indexedObj).map(i => service._memory.indexedObj[i]);
+                    service._memory.array = Object.keys(service._memory.indexedObj).map(function(i){ return service._memory.indexedObj[i]});
                     resolve(true);
                 })
             }
@@ -154,6 +155,21 @@ angular.module('neoan.flatDb', [])
                 if (typeof obj._nId === 'undefined') {
                     obj._nId = operations.uuid();
                 }
+                // too deep?
+                angular.forEach(obj,function(ty,i){
+                    if(Array.isArray(ty)){
+                        angular.forEach(ty,function(ele,k){
+                            service.put(ele).then(function(res){
+                                obj[i][k] = {_nId:res._nId};
+                            })
+                        })
+                    } else if (typeof ty === 'object' && ty !== null){
+                        service.put(ty).then(function(res){
+                            obj[i] = {_nId:res._nId};
+                        })
+                    }
+                });
+
                 operations.insertOrUpdate(obj);
                 operations.initialize().then(function () {
                     resolve(service.query(obj._nId));
